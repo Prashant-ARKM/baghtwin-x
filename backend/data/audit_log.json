@@ -1,0 +1,291 @@
+[
+  {
+    "id": 1,
+    "timestamp_utc": "2026-09-29T20:09:34+00:00",
+    "decision": "approve",
+    "reason": "test",
+    "simulation": true,
+    "model_version": "baghtwin-physics-0.1.0",
+    "autonomy_level": "L2 recommend-only: decision recorded, nothing sent to the well",
+    "receipt": {
+      "current_state": {
+        "day": 100,
+        "phase": "production",
+        "temperature_c": 75.04082462083998,
+        "viscosity_cp": 1059.8334484735217,
+        "tubing_viscosity_cp": 1535.748282858497,
+        "oil_rate_bpd": 24.230578179557686,
+        "fillage": 0.436481439692191,
+        "float_probability": 0.127565379629564,
+        "risk_level": "elevated",
+        "spm": 6,
+        "stroke_m": 2.7
+      },
+      "prediction_no_action": {
+        "alert_day": 99,
+        "float_event_day": 113,
+        "first_limit_violation_day": 96,
+        "events": [
+          {
+            "day": 96,
+            "type": "fluid_pound",
+            "message": "Pump fillage fell below 45%: impact loading likely."
+          },
+          {
+            "day": 99,
+            "type": "float_alert",
+            "message": "Rod-float risk crossed the 10% alert level."
+          },
+          {
+            "day": 99,
+            "type": "load_limit",
+            "message": "Peak polished-rod load exceeded 60 kN."
+          },
+          {
+            "day": 113,
+            "type": "rod_float",
+            "message": "Minimum downstroke load reached zero: rods no longer fall freely (float)."
+          }
+        ],
+        "max_float_probability": 0.9999999954109812,
+        "min_fillage": 0.31402816927369814,
+        "max_peak_load_kn": 83.9296859676199,
+        "oil_bbl": 5060.101458195141,
+        "violations": [
+          "peak_load_kn",
+          "min_fillage",
+          "float_probability"
+        ]
+      },
+      "recommended_action": {
+        "mode": "srp_only",
+        "effective_day": 100,
+        "css_changes": [],
+        "next_setpoint": {
+          "spm": 4,
+          "stroke_m": 2.1,
+          "from_day": 100
+        },
+        "schedule": [
+          {
+            "start_day": 19,
+            "end_day": 98,
+            "spm": 6,
+            "stroke_m": 2.7
+          },
+          {
+            "start_day": 99,
+            "end_day": 103,
+            "spm": 4,
+            "stroke_m": 2.1
+          },
+          {
+            "start_day": 104,
+            "end_day": 118,
+            "spm": 2.5,
+            "stroke_m": 2.7
+          },
+          {
+            "start_day": 119,
+            "end_day": 148,
+            "spm": 2.5,
+            "stroke_m": 2.4
+          },
+          {
+            "start_day": 149,
+            "end_day": 188,
+            "spm": 2.5,
+            "stroke_m": 2.1
+          },
+          {
+            "start_day": 189,
+            "end_day": 220,
+            "spm": 2,
+            "stroke_m": 2.4
+          }
+        ],
+        "schedule_text": "days 19-98: 6.0 SPM x 2.7 m; days 99-103: 4.0 SPM x 2.1 m; days 104-118: 2.5 SPM x 2.7 m; days 119-148: 2.5 SPM x 2.4 m; days 149-188: 2.5 SPM x 2.1 m; days 189-220: 2.0 SPM x 2.4 m",
+        "autonomy": "L2: recommend-only. A human must approve; nothing is sent to the well."
+      },
+      "why": [
+        "Without action (6.0 SPM x 2.7 m) the twin predicts the first hard-limit breach on day 96: tubing viscosity has risen to 1419 cP as the near-wellbore temperature cooled to 77 C. Peak polished-rod load reaches 84 kN, minimum pump fillage falls to 31% and float probability reaches 100% (from day 100 on).",
+        "The schedule starts at 6.0 SPM x 2.7 m (with 1536 cP in the tubing) and steps down to 2.0 SPM x 2.4 m by day 189, when it averages 3141 cP: slower strokes cut viscous downstroke drag and let the pump fill, keeping every hard limit inside its margin.",
+        "Result under the same twin (from day 100 on): max float probability 0.0% (limit 20%), min fillage 81% (limit 45%), peak load 51 kN (limit 60 kN).",
+        "Oil 5060 bbl (-0 bbl vs no action), SOR 1.99 (was 1.99), energy 230 kWh/bbl (was 242), value per cycle-day 1150 USD (was 1023, placeholder prices)."
+      ],
+      "constraint_margins": [
+        {
+          "name": "injection_pressure_mpa",
+          "value": 9,
+          "limit": 12,
+          "margin_pct": 25,
+          "active": false,
+          "violated": false
+        },
+        {
+          "name": "min_injection_pressure_mpa",
+          "value": 9,
+          "limit": 4,
+          "margin_pct": 125,
+          "active": false,
+          "violated": false
+        },
+        {
+          "name": "peak_load_kn",
+          "value": 50.65090658061811,
+          "limit": 60,
+          "margin_pct": 15.58182236563648,
+          "active": false,
+          "violated": false
+        },
+        {
+          "name": "min_fillage",
+          "value": 0.8083271939597944,
+          "limit": 0.45,
+          "margin_pct": 79.62826532439874,
+          "active": false,
+          "violated": false
+        },
+        {
+          "name": "float_probability",
+          "value": 0.00013319287729800754,
+          "limit": 0.2,
+          "margin_pct": 99.933403561351,
+          "active": false,
+          "violated": false
+        },
+        {
+          "name": "spm_max",
+          "value": 4,
+          "limit": 8,
+          "margin_pct": 50,
+          "active": false,
+          "violated": false
+        },
+        {
+          "name": "spm_min",
+          "value": 2,
+          "limit": 2,
+          "margin_pct": 0,
+          "active": true,
+          "violated": false
+        },
+        {
+          "name": "stroke_max_m",
+          "value": 2.7,
+          "limit": 3,
+          "margin_pct": 9.999999999999993,
+          "active": true,
+          "violated": false
+        },
+        {
+          "name": "stroke_min_m",
+          "value": 2.1,
+          "limit": 1.5,
+          "margin_pct": 40.00000000000001,
+          "active": false,
+          "violated": false
+        }
+      ],
+      "uncertainty_margin_frac": 0.05,
+      "confidence": {
+        "level": "high",
+        "recommended": {
+          "n_draws": 20,
+          "oil_bbl_p05": 5002.120370410074,
+          "oil_bbl_p50": 5075.561153436631,
+          "oil_bbl_p95": 5132.843678741295,
+          "violation_fraction": 0,
+          "worst_max_float_probability": 0.00014032071048646343
+        },
+        "no_action": {
+          "n_draws": 20,
+          "oil_bbl_p05": 5002.120370410074,
+          "oil_bbl_p50": 5076.091525854866,
+          "oil_bbl_p95": 5135.0223566080895,
+          "violation_fraction": 1,
+          "worst_max_float_probability": 0.9999999969186409
+        },
+        "basis": "Plan re-run under 20 draws from the calibration parameter uncertainty (fitted on SYNTHETIC history). Structural model error and real-plant differences are NOT covered."
+      },
+      "audit_stub": {
+        "status": "pending_human_decision",
+        "autonomy_level": "L2 recommend-only",
+        "simulation": true,
+        "model_version": "baghtwin-physics-0.1.0",
+        "created_utc": "2026-09-29T20:08:51+00:00",
+        "input_hash": "5993c9f2098ddf84",
+        "cycle": 4,
+        "mode": "srp_only",
+        "weights": {
+          "oil": 1,
+          "sor": 1,
+          "energy": 1,
+          "failure": 1,
+          "risk": 1
+        },
+        "calibration": {
+          "cycles_used": [
+            1,
+            2,
+            3
+          ],
+          "data": "SYNTHETIC"
+        }
+      },
+      "what_if": [
+        {
+          "label": "No action: keep fixed settings",
+          "oil_bbl": 5060.101458195141,
+          "sor": 1.988832849132152,
+          "energy": 242.19978975470931,
+          "max_float_probability": 0.9999999954109812,
+          "min_fillage": 0.31402816927369814,
+          "value_per_cycle_day": 1022.7173288711023,
+          "violations": [
+            "peak_load_kn",
+            "min_fillage",
+            "float_probability"
+          ]
+        },
+        {
+          "label": "Recommended plan",
+          "oil_bbl": 5059.9849654067875,
+          "sor": 1.9888786367551883,
+          "energy": 229.8633444443872,
+          "max_float_probability": 0.00013319287729800754,
+          "min_fillage": 0.8083271939597944,
+          "value_per_cycle_day": 1149.9026132282784,
+          "violations": []
+        },
+        {
+          "label": "Recommended plan, but every set-point +2 SPM",
+          "oil_bbl": 5060.101458195141,
+          "sor": 1.988832849132152,
+          "energy": 235.82568661978965,
+          "max_float_probability": 0.6077557033608503,
+          "min_fillage": 0.5029548913114751,
+          "value_per_cycle_day": 1081.8250003935689,
+          "violations": [
+            "peak_load_kn",
+            "float_probability"
+          ]
+        },
+        {
+          "label": "Recommended plan, but pump changes made only on day 106 (acting late)",
+          "oil_bbl": 5059.9849654067875,
+          "sor": 1.9888786367551883,
+          "energy": 230.25625408280484,
+          "max_float_probability": 0.26933693174328655,
+          "min_fillage": 0.4216162979448018,
+          "value_per_cycle_day": 1146.4606495874257,
+          "violations": [
+            "peak_load_kn",
+            "min_fillage",
+            "float_probability"
+          ]
+        }
+      ]
+    }
+  }
+]

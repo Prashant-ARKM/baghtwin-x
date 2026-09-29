@@ -384,8 +384,9 @@ export function postOptimize(body: {
 }
 
 export type ApprovalResponse = {
-  id?: string;
+  id?: string | number;
   timestamp?: string;
+  timestamp_utc?: string;
   decision?: string;
   reason?: string;
   status?: string;
@@ -403,4 +404,92 @@ export function approveRecommendation(body: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
+}
+
+
+// ---------------------------------------------------------------------------
+// Replay, Credibility, Audit
+// ---------------------------------------------------------------------------
+
+export type DeltaMetric = {
+  baseline: number;
+  recommended: number;
+  delta: number;
+  delta_pct: number | null;
+};
+
+export type ReplayResponse = {
+  simulation: true;
+  synthetic: true;
+  model_version: string;
+  cycle: number;
+  held_out: boolean;
+  days: number[];
+  predicted_vs_actual: {
+    predicted_oil_bpd: (number | null)[];
+    lo_bpd: (number | null)[];
+    hi_bpd: (number | null)[];
+    actual_oil_bpd: (number | null)[];
+  };
+  mae: number;
+  rmse: number;
+  mape_pct: number;
+  interval_coverage: number;
+  mae_uncalibrated_bpd: number;
+  baseline: Trajectory;
+  recommended: Trajectory;
+  recommended_schedule: ScheduleBlock[];
+  plant_proxy_check: {
+    description: string;
+    baseline: OptimizePlan;
+    recommended: OptimizePlan;
+  };
+  headline_deltas: Record<string, DeltaMetric>;
+  label: string;
+};
+
+export function fetchReplay(cycle: number): Promise<ReplayResponse> {
+  return requestJson<ReplayResponse>(`/api/replay?cycle=${cycle}`);
+}
+
+export type CredibilityParameter = WellParameter & { fitted_scale?: number };
+
+export type CredibilityResponse = {
+  simulation: true;
+  synthetic: boolean;
+  model_version: string;
+  modelled_vs_assumed: {
+    component: string;
+    method: string;
+    status: string;
+    limitation: string;
+  }[];
+  parameters: CredibilityParameter[];
+  validity_bounds: Record<string, unknown>;
+  metrics: Record<string, Record<string, unknown>>;
+  caveats?: string[];
+};
+
+export function fetchCredibility(): Promise<CredibilityResponse> {
+  return requestJson<CredibilityResponse>("/api/credibility");
+}
+
+export type AuditEntry = {
+  id: number;
+  timestamp_utc: string;
+  decision: "approve" | "reject";
+  reason: string;
+  autonomy_level: string;
+  model_version: string;
+  receipt: EngineeringReceipt;
+};
+
+export type RecommendationsResponse = {
+  simulation: true;
+  model_version: string;
+  entries: AuditEntry[];
+};
+
+export function fetchRecommendations(): Promise<RecommendationsResponse> {
+  return requestJson<RecommendationsResponse>("/api/recommendations");
 }

@@ -6,7 +6,7 @@ import PlotlyChart, { PlotlyFigure } from "@/components/PlotlyChart";
 export default function ChartCard({
   title,
   caption,
-  height = 260,
+  height = 300,
   figure,
   loading,
   onPlotClick,
@@ -25,9 +25,9 @@ export default function ChartCard({
   const skeletonBars = useMemo(() => [0.6, 0.85, 0.7], []);
 
   return (
-    <section className="rounded-lg border border-line bg-white p-4 shadow-card">
+    <section className="rounded-xl border border-line bg-white p-4 shadow-card">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold">{title}</h3>
+        <h3 className="text-sm font-bold tracking-tight">{title}</h3>
         {action}
       </div>
       <div className="mt-3" style={{ minHeight: height }}>
@@ -54,7 +54,7 @@ export default function ChartCard({
           />
         )}
       </div>
-      <p className="mt-2 text-xs text-muted">{caption}</p>
+      <p className="mt-2 border-t border-line pt-2.5 text-xs leading-relaxed text-muted">{caption}</p>
     </section>
   );
 }

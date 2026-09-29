@@ -6,7 +6,9 @@ import OptimizerControls from "@/components/OptimizerControls";
 import { CssChangesTable, PumpScheduleTable } from "@/components/OptimizerTables";
 import OptimizerConstraints from "@/components/OptimizerConstraints";
 import OptimizerReceipt from "@/components/OptimizerReceipt";
+import { HeadlineCard } from "@/components/Delta";
 import { Card, ErrorCard } from "@/components/ui";
+import Icon from "@/components/Icon";
 import {
   approveRecommendation,
   postOptimize,
@@ -30,68 +32,6 @@ const DEFAULT_WEIGHTS: OptimizeWeights = {
   failure: 1,
   risk: 1,
 };
-
-type Direction = "lower" | "higher";
-
-function fmtSigned(value: number, digits = 1): string {
-  return `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(digits)}`;
-}
-
-/** Delta chip: green when the recommended plan moved the metric the good way. */
-function DeltaChip({
-  deltaPct,
-  direction,
-}: {
-  deltaPct: number;
-  direction: Direction;
-}) {
-  const better = direction === "lower" ? deltaPct < 0 : deltaPct > 0;
-  const cls = better
-    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-    : "border-red-200 bg-red-50 text-red-700";
-  return (
-    <span
-      className={`inline-flex items-center rounded-full border px-1.5 py-px text-[11px] font-semibold tabular-nums ${cls}`}
-    >
-      {fmtSigned(deltaPct)}%
-    </span>
-  );
-}
-
-function HeadlineCard({
-  title,
-  unit,
-  baseline,
-  recommended,
-  deltaPct,
-  direction,
-  digits = 1,
-}: {
-  title: string;
-  unit: string;
-  baseline: number;
-  recommended: number;
-  deltaPct: number;
-  direction: Direction;
-  digits?: number;
-}) {
-  return (
-    <Card className="!p-3">
-      <div className="text-[11px] font-medium uppercase tracking-wide text-muted">
-        {title}
-      </div>
-      <div className="mt-0.5 flex items-baseline gap-1.5 text-lg font-semibold tabular-nums">
-        <span className="text-muted">{baseline.toFixed(digits)}</span>
-        <span className="text-xs text-muted">→</span>
-        <span>{recommended.toFixed(digits)}</span>
-        <span className="text-xs font-normal text-muted">{unit}</span>
-      </div>
-      <div className="mt-1.5">
-        <DeltaChip deltaPct={deltaPct} direction={direction} />
-      </div>
-    </Card>
-  );
-}
 
 export default function OptimizerPage() {
   const [mode, setMode] = useState<OptimizeMode>("srp_only");
@@ -182,28 +122,36 @@ export default function OptimizerPage() {
     [result]
   );
 
+  const showPareto = useMemo(() => {
+    if (!result) return false;
+    const pts = result.pareto.filter((q) => q.css?.cutoff_day !== undefined);
+    if (pts.length < 3) return false;
+    const spread = (vals: number[]) => {
+      const lo = Math.min(...vals);
+      const hi = Math.max(...vals);
+      return hi > 0 ? ((hi - lo) / hi) * 100 : 0;
+    };
+    return (
+      spread(pts.map((q) => q.oil_bbl)) >= 2 ||
+      spread(pts.map((q) => q.css?.steam_volume_m3 ?? 0)) >= 2
+    );
+  }, [result]);
+
   const headline = result?.headline;
   const breaches = result?.baseline.violations.length ?? 0;
   const recFeasible = result ? result.recommended.feasible && result.recommended.violations.length === 0 : false;
+  const stale = !!result && (result.mode !== mode || result.current_day !== currentDay || Object.keys(weights).some(key => weights[key as keyof OptimizeWeights] !== result.weights[key as keyof OptimizeWeights]));
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-xl font-semibold">Optimizer</h1>
-        <span className="text-xs text-muted">
-          The twin searches bounded plans, re-simulates every candidate and only
-          returns ones that respect the hard limits.
-        </span>
-        {result && (
-          <span className="ml-auto text-[11px] text-muted">
-            model {result.model_version} · SIMULATION
-          </span>
-        )}
+      <div className="page-heading">
+        <div><p className="eyebrow">Decision workspace / Cycle 04</p><h1>Plan a better cycle<span className="heading-dot">.</span></h1><p>Balance production, efficiency and risk. Review the evidence behind every setting.</p></div>
+        <div className="context-pill"><Icon name="optimizer"/><b>Engineer-led decisions</b></div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+      <div className="grid grid-cols-[260px_minmax(0,1fr)] gap-6">
         {/* Left: controls */}
-        <div className="xl:col-span-3">
+        <div>
           <OptimizerControls
             mode={mode}
             weights={weights}
@@ -217,7 +165,7 @@ export default function OptimizerPage() {
         </div>
 
         {/* Right: results */}
-        <div className="space-y-4 xl:col-span-9">
+        <div className="space-y-5">
           {solveError && (
             <ErrorCard
               message={solveError}
@@ -227,14 +175,7 @@ export default function OptimizerPage() {
           )}
 
           {!result && !solving && !solveError && (
-            <Card>
-              <p className="text-sm text-muted">
-                Set the weights and press{" "}
-                <b>Recommend</b> — the twin simulates the cycle under candidate
-                pump (and steam) plans and returns only feasible ones, with a
-                full engineering receipt.
-              </p>
-            </Card>
+            <section className="optimizer-empty"><Icon name="optimizer"/><span className="eyebrow">Your next operating plan</span><h2>A better decision starts here.</h2><p>Set your priorities on the left, then generate a recommendation to compare schedules and inspect the engineering evidence.</p><div className="optimizer-stages"><span><b>01</b> Set priorities</span><span><b>02</b> Simulate</span><span><b>03</b> Review & approve</span></div></section>
           )}
 
           {solving && (
@@ -253,6 +194,13 @@ export default function OptimizerPage() {
 
           {result && !solving && (
             <>
+              {stale && <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800">Priorities or decision day changed. Generate a new recommendation before recording a decision. The results below show your previous plan.</div>}
+              <section className="plan-summary">
+                <div className="flex items-center justify-between"><span className="eyebrow">Recommended operating plan · Day {result.current_day}</span><a href="#engineering-receipt" className="text-link">Review engineering receipt <Icon name="arrow"/></a></div>
+                <h2>{result.receipt.recommended_action.next_setpoint ? `Set pump speed to ${result.receipt.recommended_action.next_setpoint.spm.toFixed(1)} SPM from day ${result.receipt.recommended_action.next_setpoint.from_day}.` : "Review the optimized cycle design."}</h2>
+                <div className="setpoint-comparison"><div><span>Current setting</span><strong>{result.receipt.current_state.spm.toFixed(1)} <small>SPM × {result.receipt.current_state.stroke_m.toFixed(1)} m</small></strong></div><Icon name="arrow"/><div><span>Recommended first setting</span><strong>{result.receipt.recommended_action.next_setpoint?.spm.toFixed(1) ?? "—"} <small>SPM × {result.receipt.recommended_action.next_setpoint?.stroke_m.toFixed(1) ?? "—"} m</small></strong></div></div>
+                <p>{result.receipt.recommended_action.schedule_text}</p>
+              </section>
               {/* Status line */}
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div className="flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5">
@@ -320,7 +268,7 @@ export default function OptimizerPage() {
                 />
                 <HeadlineCard
                   title="Failure risk"
-                  unit="prob."
+                  unit="failures/cycle"
                   baseline={headline!.risk.baseline}
                   recommended={headline!.risk.recommended}
                   deltaPct={headline!.risk.delta_pct}
@@ -380,12 +328,21 @@ export default function OptimizerPage() {
 
               {/* Pareto + constraints */}
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <ChartCard
-                  title="Plan trade-offs (Pareto set)"
-                  caption="Each point is a feasible plan; nothing in this set breaks a hard limit."
-                  figure={paretoFig}
-                  loading={!paretoFig}
-                />
+                {showPareto ? (
+                  <ChartCard
+                    title="Plan trade-offs (Pareto set)"
+                    caption="Each point is a feasible plan; nothing in this set breaks a hard limit."
+                    figure={paretoFig}
+                    loading={!paretoFig}
+                  />
+                ) : (
+                  <Card>
+                    <h3 className="text-sm font-semibold">Plan trade-offs (Pareto set)</h3>
+                    <p className="mt-2 text-xs leading-relaxed text-muted">
+                      In pump-only mode all plans give almost the same oil and steam use, so the trade-off is in risk and energy. Switch to Steam + pump to see the trade-off.
+                    </p>
+                  </Card>
+                )}
                 <OptimizerConstraints
                   margins={result.receipt.constraint_margins}
                   activeConstraints={result.active_constraints}
@@ -393,16 +350,16 @@ export default function OptimizerPage() {
               </div>
 
               {/* Engineering receipt */}
-              <OptimizerReceipt
+              <div id="engineering-receipt" className="scroll-mt-24"><OptimizerReceipt
                 receipt={result.receipt}
                 reason={reason}
-                decisionBusy={decisionBusy}
+                decisionBusy={decisionBusy || stale}
                 decisionError={decisionError}
                 decisionResult={decisionResult}
                 onReasonChange={setReason}
                 onApprove={() => void decide("approve")}
                 onReject={() => void decide("reject")}
-              />
+              /></div>
             </>
           )}
         </div>

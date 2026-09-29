@@ -8,12 +8,21 @@ venv/
 # Node / Next.js
 node_modules/
 frontend/.next/
+frontend/.next-dev/
 frontend/out/
 next-env.d.ts
 
 # Misc
 .DS_Store
 *.log
+
+# Local planning and review artifacts
+BUILD_BRIEF.md
+PROGRESS.md
+TOOL_PROMPTS.md
+home-screenshot.png
+desktop-redesign.png
+tutorial-preview.png
 
 # TS incremental build info
 tsconfig.tsbuildinfo

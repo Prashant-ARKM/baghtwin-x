@@ -41,7 +41,7 @@ export default function PlotlyInner({
   return (
     <Plot
       data={data}
-      layout={layout}
+      layout={{ ...layout, autosize: true, height }}
       config={BASE_CONFIG}
       style={{ width: "100%", height }}
       useResizeHandler

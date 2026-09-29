@@ -19,23 +19,26 @@ import type {
 export const FONT = {
   family:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-  size: 11,
-  color: "#5c6b80",
+  size: 10,
+  color: "#7b8da3",
 } as const;
 
 export const BASE_LAYOUT: Partial<Layout> = {
   paper_bgcolor: "#ffffff",
-  plot_bgcolor: "#ffffff",
+  plot_bgcolor: "#fcfdff",
   font: FONT,
-  margin: { l: 54, r: 54, t: 12, b: 32 },
+  margin: { l: 48, r: 28, t: 45, b: 46 },
   showlegend: true,
   legend: {
     orientation: "h",
-    y: 1.12,
+    y: 1.06,
+    yanchor: "bottom",
     x: 0,
+    font: { size: 9 },
     bgcolor: "rgba(255,255,255,0)",
   },
-  hovermode: "x",
+  hovermode: "x unified",
+  hoverlabel: { bgcolor: "#ffffff", bordercolor: "#dce6f2", font: { size: 11, color: "#344e6c" } },
 };
 
 const GRIDCOLOR = "#e3e9f1";

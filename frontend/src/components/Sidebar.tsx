@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const tabs = [
+  { label: "Overview", href: "/", ready: true },
   { label: "Well Twin", href: "/well-twin", ready: true },
-  { label: "Risk", href: "/risk", ready: false },
-  { label: "Optimizer", href: "/optimizer", ready: false },
-  { label: "Replay", href: "/replay", ready: false },
-  { label: "Credibility", href: "/credibility", ready: false },
-  { label: "Audit", href: "/audit", ready: false },
+  { label: "Risk", href: "/risk", ready: true },
+  { label: "Optimizer", href: "/optimizer", ready: true },
+  { label: "Replay", href: "/replay", ready: true },
+  { label: "Credibility", href: "/credibility", ready: true },
+  { label: "Audit", href: "/audit", ready: true },
 ];
 
 export default function Sidebar() {

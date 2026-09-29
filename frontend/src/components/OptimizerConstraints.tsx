@@ -2,6 +2,18 @@
 
 import type { ConstraintMargin } from "@/lib/api";
 
+const LABELS: Record<string, string> = {
+  peak_load_kn: "Peak rod load (kN)",
+  min_fillage: "Min pump fillage",
+  float_probability: "Rod-float probability",
+  spm_min: "Pump speed min (SPM)",
+  spm_max: "Pump speed max (SPM)",
+  stroke_min_m: "Stroke min (m)",
+  stroke_max_m: "Stroke max (m)",
+  injection_pressure_mpa: "Injection pressure (MPa)",
+  min_injection_pressure_mpa: "Min injection pressure (MPa)",
+};
+
 export default function OptimizerConstraints({
   margins,
   activeConstraints,
@@ -33,10 +45,10 @@ export default function OptimizerConstraints({
           return (
             <li key={m.name}>
               <div className="flex items-baseline justify-between gap-2 text-xs">
-                <span className="flex items-center gap-1.5 truncate capitalize">
-                  {m.name.replace(/_/g, " ")}
+                <span className="flex items-center gap-1.5 truncate">
+                  {LABELS[m.name] ?? m.name.replace(/_/g, " ")}
                   {isActive && (
-                    <span className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide text-accent">
+                    <span title="Operating at the edge of its allowed range" className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide text-accent">
                       active
                     </span>
                   )}

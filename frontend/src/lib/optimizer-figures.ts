@@ -51,6 +51,8 @@ function overlayTraces(
   const naSeries = noAction[key] as (number | null)[];
   const waSeries = withAction[key] as (number | null)[];
   const lineShape = opts.step ? ("hv" as const) : ("linear" as const);
+  const percentage = key === "float_probability" || key === "fillage";
+  const valueFormat = percentage ? ".0%" : ".2f";
 
   const data: Data[] = [
     {
@@ -61,7 +63,7 @@ function overlayTraces(
       y: naSeries,
       line: { color: GREY, width: 2, shape: lineShape },
       connectgaps: false,
-      hovertemplate: "Day %{x:.0f}: %{y:.2f}<extra>No action</extra>",
+      hovertemplate: `Day %{x:.0f}: %{y:${valueFormat}}<extra>No action</extra>`,
     },
     {
       type: "scatter",
@@ -71,7 +73,7 @@ function overlayTraces(
       y: waSeries,
       line: { color: BLUE, width: 2, shape: lineShape },
       connectgaps: false,
-      hovertemplate: "Day %{x:.0f}: %{y:.2f}<extra>Recommended</extra>",
+      hovertemplate: `Day %{x:.0f}: %{y:${valueFormat}}<extra>Recommended</extra>`,
     },
   ];
 
@@ -89,6 +91,7 @@ function overlayTraces(
   }
 
   const layout = baseLayout("Day", yTitle);
+  if (percentage) layout.yaxis = { ...layout.yaxis, tickformat: ".0%" };
   layout.shapes = (opts.refLines ?? []).map((ref) => ({
     type: "line" as const,
     xref: "paper" as const,

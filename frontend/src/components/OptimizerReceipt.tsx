@@ -1,5 +1,6 @@
 "use client";
 
+import { PumpScheduleTable } from "@/components/OptimizerTables";
 import type { EngineeringReceipt } from "@/lib/api";
 
 const CONFIDENCE_STYLES = {
@@ -70,7 +71,7 @@ function RecommendedAction({ r }: { r: EngineeringReceipt }) {
       <h4 className="text-xs font-semibold uppercase tracking-wide text-muted">
         Recommended action
       </h4>
-      <p className="mt-1.5 text-xs leading-relaxed text-ink">{a.schedule_text}</p>
+      <div className="mt-2"><PumpScheduleTable schedule={a.schedule} /></div>
       {a.next_setpoint && (
         <p className="mt-1 text-xs text-ink">
           First change: <b>{a.next_setpoint.spm.toFixed(1)} SPM × {a.next_setpoint.stroke_m.toFixed(1)} m</b>{" "}
@@ -96,16 +97,16 @@ export default function OptimizerReceipt({
   reason: string;
   decisionBusy: boolean;
   decisionError: string | null;
-  decisionResult: { id?: string; timestamp?: string; decision?: string; status?: string } | null;
+  decisionResult: { id?: string | number; timestamp_utc?: string; decision?: string; status?: string } | null;
   onReasonChange: (reason: string) => void;
   onApprove: () => void;
   onReject: () => void;
 }) {
   const c = receipt.confidence;
   return (
-    <section className="rounded-lg border border-line bg-white p-4 shadow-card">
+    <section className="rounded-xl border border-line bg-white p-6 shadow-card">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Engineering receipt</h3>
+        <div><p className="eyebrow mb-2">Evidence & decision</p><h3 className="text-lg font-semibold">Engineering receipt</h3></div>
         <span className="rounded-full border border-line bg-page px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">
           uncertainty margin {(receipt.uncertainty_margin_frac * 100).toFixed(0)}%
         </span>
@@ -205,6 +206,7 @@ export default function OptimizerReceipt({
             value={reason}
             onChange={(e) => onReasonChange(e.target.value)}
             placeholder="Reason (required)…"
+            aria-label="Decision reason (required)"
             className="min-w-48 flex-1 rounded-md border border-line bg-white px-2.5 py-1.5 text-xs"
           />
           <button
@@ -228,8 +230,8 @@ export default function OptimizerReceipt({
         {decisionResult && (
           <p className="mt-2 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs text-emerald-800">
             Decision recorded: <b>{decisionResult.decision ?? decisionResult.status}</b>
-            {decisionResult.id ? ` · id ${decisionResult.id}` : ""}
-            {decisionResult.timestamp ? ` · ${decisionResult.timestamp}` : ""}
+            {decisionResult.id !== undefined ? ` · #${decisionResult.id}` : ""}
+            {decisionResult.timestamp_utc ? ` · ${new Date(decisionResult.timestamp_utc).toLocaleString()}` : ""}
           </p>
         )}
       </div>

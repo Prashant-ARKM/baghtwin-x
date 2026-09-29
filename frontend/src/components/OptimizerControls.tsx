@@ -65,9 +65,9 @@ export default function OptimizerControls({
   onRecommend: () => void;
 }) {
   return (
-    <section className="rounded-lg border border-line bg-white p-4 shadow-card">
+    <section className="sticky top-[89px] rounded-xl border border-line bg-white p-5 shadow-card">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Plan</h3>
+        <h3 className="text-sm font-semibold">Plan configuration</h3>
         <span className="text-[11px] text-muted">cycle 4</span>
       </div>
 
@@ -96,7 +96,8 @@ export default function OptimizerControls({
       </div>
 
       {/* Weights */}
-      <div className="mt-4 space-y-3">
+      <p className="eyebrow mt-7 mb-4">Optimization priorities</p>
+      <div className="space-y-5">
         {WEIGHT_LABELS.map((w) => (
           <WeightSlider
             key={w.key}
@@ -134,7 +135,7 @@ export default function OptimizerControls({
       <button
         onClick={onRecommend}
         disabled={solving}
-        className="mt-4 w-full rounded-md bg-accent px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
+        className="primary-button mt-7 w-full !justify-center disabled:cursor-wait disabled:opacity-60"
       >
         {solving ? (
           <span className="inline-flex items-center justify-center gap-2">
@@ -142,7 +143,7 @@ export default function OptimizerControls({
             Solving with the twin…
           </span>
         ) : (
-          "Recommend"
+          "Generate recommendation"
         )}
       </button>
       <p className="mt-2 text-[11px] leading-snug text-muted">

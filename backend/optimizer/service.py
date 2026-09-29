@@ -144,8 +144,10 @@ def _confidence(rec: dict, base: dict) -> dict:
 # ----------------------------------------------------------------------------------------- receipt
 def _what_if(label: str, cycle: int, css: dict, srp, p: ParamSet, from_day: float) -> dict:
     res, e, viol = _run(cycle, css, srp, p, from_day)
+    fut = {r["name"]: r["value"] for r in Sr.constraint_rows(res, from_day)}      # decision day onward, like 'violations'
     return {"label": label, "oil_bbl": e["oil_bbl"], "sor": e["sor"], "energy": e["energy_kwh_per_bbl"],
-            "max_float_probability": e["max_float_probability"], "min_fillage": e["min_fillage"],
+            "max_float_probability": fut.get("float_probability", e["max_float_probability"]),
+            "min_fillage": fut.get("min_fillage", e["min_fillage"]),
             "value_per_cycle_day": e["value_per_cycle_day"], "violations": viol}
 
 
@@ -183,7 +185,7 @@ def build_receipt(cycle, mode, weights, decision_day, cur_css, rec_css, base_res
             "float_probability", "risk_level", "spm", "stroke_m")
     current_state = {k: state.get(k) for k in keep}
 
-    viol_days = Sr.violation_days(base_res, from_day)
+    viol_days = Sr.violation_days(base_res, 0.0)                      # narrative: first breach anywhere in the cycle
     first_viol = int(base_res.days[viol_days][0]) if viol_days.any() else None
     pred_no_action = {
         "alert_day": base_res.alert_day(), "float_event_day": base_res.float_event_day(),
@@ -222,8 +224,9 @@ def build_receipt(cycle, mode, weights, decision_day, cur_css, rec_css, base_res
         i0 = int(np.where(rec_res.days == max(first["start_day"], day0))[0][0])
         i1 = int(np.where(rec_res.days == last["start_day"])[0][0])
         why.append(
-            f"The schedule starts at {first['spm']:.1f} SPM x {first['stroke_m']:.1f} m while the oil is still thin "
-            f"({b['mu_tub_cp'][i0]:.0f} cP in the tubing) and steps down to {last['spm']:.1f} SPM x {last['stroke_m']:.1f} m "
+            f"The schedule starts at {first['spm']:.1f} SPM x {first['stroke_m']:.1f} m "
+            f"({'while the oil is still thin, ' if b['mu_tub_cp'][i0] < 300 else 'with '}{b['mu_tub_cp'][i0]:.0f} cP in the tubing) "
+            f"and steps down to {last['spm']:.1f} SPM x {last['stroke_m']:.1f} m "
             f"by day {last['start_day']}, when it averages {b['mu_tub_cp'][i1]:.0f} cP: slower strokes cut viscous downstroke "
             f"drag and let the pump fill, keeping every hard limit inside its margin.")
     if rec_plan_emergency:
@@ -365,10 +368,9 @@ def optimize(req: Optional[dict] = None) -> dict:
     rob_base = robustness(cycle, cur_css, None, from_day)
     day0 = int(max(current_day, ps))
     plus2 = [dict(s, spm=min(s["spm"] + 2.0, p["spm_max"])) for s in srp_rec]
-    vd = Sr.violation_days(base_res, from_day)
-    late_day = int(base_res.days[vd][0]) + 10 if vd.any() else day0 + 14
-    late_label = (f"Recommended plan, but pump changes made only on day {late_day} "
-                  f"({'10 days after the predicted first breach' if vd.any() else '14 days late'})")
+    vd = Sr.violation_days(base_res, 0.0)
+    late_day = max(int(base_res.days[vd][0]) + 10, day0 + 5) if vd.any() else day0 + 14
+    late_label = f"Recommended plan, but pump changes made only on day {late_day} (acting late)"
     what_if = [
         _what_if("No action: keep fixed settings", cycle, cur_css, None, p, from_day),
         _what_if("Recommended plan", cycle, css_rec_full, srp_rec, p, from_day),

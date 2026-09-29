@@ -128,8 +128,8 @@ export default function WellTwinPage() {
   return (
     <div className="space-y-4">
       {/* Controls row */}
+      <div className="page-heading"><div><p className="eyebrow">Physics workspace / Well A</p><h1>Inside the well<span className="heading-dot">.</span></h1><p>Trace the connection between reservoir heat, oil flow and rod loading.</p></div></div>
       <div className="flex flex-wrap items-center gap-4">
-        <h1 className="text-xl font-semibold">Well Twin</h1>
         <label className="flex items-center gap-2 text-sm text-muted">
           Cycle
           <select

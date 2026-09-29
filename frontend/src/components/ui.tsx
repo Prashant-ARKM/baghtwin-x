@@ -17,7 +17,7 @@ export function Card({
 }) {
   return (
     <section
-      className={`rounded-lg border border-line bg-white p-4 shadow-card ${className}`}
+      className={`rounded-xl border border-line bg-white p-4 shadow-card ${className}`}
     >
       {children}
     </section>
@@ -41,14 +41,14 @@ export function KpiCard({
   footer?: React.ReactNode;
 }) {
   return (
-    <Card className="!p-3">
-      <div className="text-[11px] font-medium uppercase tracking-wide text-muted">
+    <Card className="!p-3.5">
+      <div className="text-[10px] font-bold uppercase tracking-[0.11em] text-muted">
         {label}
       </div>
       {value === "…" ? (
         <Skeleton className="mt-1.5 h-5 w-16" />
       ) : (
-        <div className="mt-0.5 text-lg font-semibold tabular-nums">
+        <div className="mt-1 text-xl font-semibold tracking-tight tabular-nums">
           {value}
           {unit && (
             <span className="ml-1 text-xs font-normal text-muted">{unit}</span>
@@ -79,7 +79,7 @@ export function RiskChip({ level }: { level: "low" | "elevated" | "high" }) {
   const s = RISK_STYLES[level];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${s.chip}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] ${s.chip}`}
     >
       <span className={`inline-block h-1.5 w-1.5 rounded-full ${s.dot}`} />
       {level} risk
