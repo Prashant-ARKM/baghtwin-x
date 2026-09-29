@@ -28,6 +28,47 @@ npm run dev
 
 Then open <http://localhost:3000>.
 
+## Deploy it
+
+Deploy the API as a Render Web Service and the Next.js app as a Vercel project.
+This keeps the Python simulation service separate from the desktop frontend.
+
+### 1. Deploy the API on Render
+
+Create a new Web Service from `Prashant-ARKM/baghtwin-x`, using these settings:
+
+- Root Directory: `backend`
+- Runtime: `Python 3`
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `uvicorn api.main:app --host 0.0.0.0 --port $PORT`
+- Health Check Path: `/api/health`
+
+After the deploy finishes, copy the service URL, for example
+`https://baghtwin-x-api.onrender.com`.
+
+Add this Render environment variable, replacing the value with your Vercel URL
+after the frontend is created:
+
+```text
+CORS_ALLOW_ORIGINS=https://baghtwin-x.vercel.app
+```
+
+### 2. Deploy the frontend on Vercel
+
+Import the same GitHub repository into Vercel. Set the project Root Directory to
+`frontend`, keep the detected Next.js build settings, and add this Production
+environment variable:
+
+```text
+NEXT_PUBLIC_API_URL=https://baghtwin-x-api.onrender.com
+```
+
+Deploy the project. Copy the resulting Vercel URL back into Render’s
+`CORS_ALLOW_ORIGINS` variable and redeploy the API once.
+
+Open the Vercel URL and confirm the Overview page loads data. Test the API
+directly at `<render-url>/api/health` if the frontend shows a connection error.
+
 ## Repo layout
 
 ```

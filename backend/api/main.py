@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import sys
 import threading
+import os
 from pathlib import Path
 from typing import Any, Optional
 
@@ -24,6 +25,13 @@ from physics.twin import _clean
 from simdata.generator import measured_overlay
 
 CORS_ALLOW_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
+_configured_origins = os.getenv("CORS_ALLOW_ORIGINS", "")
+if _configured_origins:
+    CORS_ALLOW_ORIGINS.extend(
+        origin.strip().rstrip("/")
+        for origin in _configured_origins.split(",")
+        if origin.strip()
+    )
 
 app = FastAPI(title="BaghTwin-X API", version="0.1.0",
               description="SIMULATION ONLY. Physics-informed digital twin and recommend-only optimizer (synthetic data).")
