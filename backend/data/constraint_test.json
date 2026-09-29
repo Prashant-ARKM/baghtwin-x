@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "simulation": true,
+  "scenarios_run": 21,
+  "plans_rechecked_with_full_twin": 72,
+  "violations_found": 0,
+  "check": "margin-free limits (peak load, min fillage, float probability, SPM, stroke, injection pressure) on every production day from the decision day",
+  "scenario_grid": {
+    "modes": [
+      "srp_only",
+      "joint"
+    ],
+    "cycles": [
+      2,
+      4,
+      5
+    ],
+    "weights": [
+      "default",
+      "oil only",
+      "cautious"
+    ],
+    "current_days": [
+      0,
+      90
+    ]
+  },
+  "seconds": 49.1,
+  "run_at": "2026-09-29 23:38:15",
+  "note": "Synthetic twin. Shows the optimizer never returns a plan the twin says breaks a limit; it does not prove safety on a real well."
+}

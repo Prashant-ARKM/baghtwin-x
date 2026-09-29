@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+next-env.d.ts
+
+# Misc
+.DS_Store
+*.log
+
+# TS incremental build info
+tsconfig.tsbuildinfo
+frontend/tsconfig.tsbuildinfo
