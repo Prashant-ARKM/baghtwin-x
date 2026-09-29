@@ -5,7 +5,6 @@ Run from the backend folder:   uvicorn api.main:app --reload --port 8000
 from __future__ import annotations
 
 import sys
-import threading
 import os
 from pathlib import Path
 from typing import Any, Optional
@@ -37,11 +36,6 @@ app = FastAPI(title="BaghTwin-X API", version="0.1.0",
               description="SIMULATION ONLY. Physics-informed digital twin and recommend-only optimizer (synthetic data).")
 app.add_middleware(CORSMiddleware, allow_origins=CORS_ALLOW_ORIGINS,
                    allow_methods=["*"], allow_headers=["*"])
-
-
-@app.on_event("startup")
-def _startup() -> None:
-    threading.Thread(target=sv.warm_up, daemon=True).start()
 
 
 def _bad(e: Exception) -> HTTPException:

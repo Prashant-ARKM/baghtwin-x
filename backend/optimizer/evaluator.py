@@ -16,7 +16,7 @@ from physics.twin import BBL_PER_M3
 
 
 def evaluate_states(cycle: int, css: dict, p: ParamSet, days, spm, stroke,
-                    kind: str = "conventional", n_theta: int = 128) -> Dict[str, np.ndarray]:
+                    kind: str = "conventional", n_theta: int = 64) -> Dict[str, np.ndarray]:
     """Return arrays of shape (D, S) for D days and S pump states."""
     days = np.asarray(days, dtype=float)
     spm = np.asarray(spm, dtype=float)

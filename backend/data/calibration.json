@@ -5,34 +5,34 @@
     3
   ],
   "scales": {
-    "k_decay_ref_per_day": 1.0369699314787817,
-    "perm_d": 0.8457135732199595,
-    "visc_B_K": 1.046244974937005
+    "k_decay_ref_per_day": 1.040095494743925,
+    "perm_d": 0.8503578368243992,
+    "visc_B_K": 1.0245418696566952
   },
   "sd": {
-    "k_decay_ref_per_day": 0.002777993816610004,
-    "perm_d": 0.006031765036944044,
-    "visc_B_K": 0.026928722256332013
+    "k_decay_ref_per_day": 0.0028179702193139203,
+    "perm_d": 0.0061414707276459,
+    "visc_B_K": 0.026630738746461536
   },
-  "reduced_chi2": 0.9178213411987798,
-  "oil_rel_scatter": 0.07476522521997689,
+  "reduced_chi2": 0.9328867367657642,
+  "oil_rel_scatter": 0.0673836290541471,
   "recovered_vs_synthetic_truth": {
     "k_decay_ref_per_day": {
-      "fitted": 1.0369699314787817,
+      "fitted": 1.040095494743925,
       "truth": 1.1,
-      "error_pct": -5.730006229201667
+      "error_pct": -5.445864114188648
     },
     "perm_d": {
-      "fitted": 0.8457135732199595,
+      "fitted": 0.8503578368243992,
       "truth": 0.9,
-      "error_pct": -6.03182519778227
+      "error_pct": -5.51579590840009
     },
     "visc_B_K": {
-      "fitted": 1.046244974937005,
+      "fitted": 1.0245418696566952,
       "truth": 1.015,
-      "error_pct": 3.0783226538921404
+      "error_pct": 0.940085680462599
     }
   },
   "note": "Fitted on synthetic cycles 1-3 only. Scales multiply the twin's default (assumed) parameters.",
-  "fingerprint": "dbc2f37f75942eb9d9f7bde73516358a"
+  "fingerprint": "c93937af910712dcd8690151cddf79bb"
 }

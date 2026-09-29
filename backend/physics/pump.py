@@ -70,7 +70,7 @@ def kinematics(kind: str, n: int = 128) -> np.ndarray:
 
 
 def solve_pump(spm, stroke_m, mu_cp, fluid_load_n, fillage, p: ParamSet,
-               kind: str = "conventional", n_theta: int = 128):
+               kind: str = "conventional", n_theta: int = 64):
     """Solve the rod string for a batch of operating states (all inputs broadcast to shape (B,)).
 
     Fluid-load transfer follows the rod-stretch distance: the plunger picks up (and drops) the fluid load

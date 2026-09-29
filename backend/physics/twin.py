@@ -281,7 +281,7 @@ def normalize_css(css: Optional[dict]) -> dict:
 
 def simulate_cycle(cycle: int = 3, css: Optional[dict] = None, srp: SrpSpec = None,
                    params: Optional[ParamSet] = None, kind: str = "conventional",
-                   n_theta: int = 128) -> CycleResult:
+                   n_theta: int = 64) -> CycleResult:
     p = params or active_params()
     css = normalize_css(css)
     z0 = thermal.heated_zone(css["steam_volume_m3"], css["injection_pressure_mpa"], p)
@@ -347,7 +347,7 @@ def simulate_cycle(cycle: int = 3, css: Optional[dict] = None, srp: SrpSpec = No
 
 
 # ---------------------------------------------------------------------------------------------
-@lru_cache(maxsize=256)
+@lru_cache(maxsize=8)
 def _cached(cycle, css_t, spm, stroke):
     css = dict(css_t)
     return simulate_cycle(cycle, css, {"spm": spm, "stroke_m": stroke})

@@ -191,7 +191,7 @@ def test_state_dict_shapes_and_phases():
     assert inj["phase"] == "injection" and inj["card"]["position"] == []
     st = r.state_dict(100)
     json.dumps(st, allow_nan=False)
-    assert st["phase"] == "production" and len(st["card"]["position"]) == len(st["card"]["load"]) == 65
+    assert st["phase"] == "production" and len(st["card"]["position"]) == len(st["card"]["load"]) == 33
     assert st["risk_level"] in ("low", "elevated", "high") and st["risk_reason"]
     assert {"name", "value", "limit", "margin_pct", "active"} <= set(st["constraint_margins"][0])
 

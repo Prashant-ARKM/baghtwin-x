@@ -34,6 +34,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 AUDIT_FILE = DATA_DIR / "audit_log.json"
 _LOCK = threading.Lock()
 _CACHE: Dict[str, dict] = {}
+_CACHE_MAX_SIZE = 2
 _CSS_KEYS = ("steam_volume_m3", "injection_pressure_mpa", "soak_days", "cutoff_day")
 SCENARIO_LABELS = {"requested": "Balanced (requested weights)", "max_oil": "Maximum oil",
                    "efficiency": "Steam / energy efficiency", "safety": "Lowest risk"}
@@ -405,6 +406,8 @@ def optimize(req: Optional[dict] = None) -> dict:
     }
     out = _clean(out)
     _CACHE[key] = copy.deepcopy(out)
+    while len(_CACHE) > _CACHE_MAX_SIZE:
+        del _CACHE[next(iter(_CACHE))]
     return out
 
 
@@ -464,6 +467,8 @@ def replay(cycle: int = 4) -> dict:
     }
     out = _clean(out)
     _CACHE[key] = copy.deepcopy(out)
+    while len(_CACHE) > _CACHE_MAX_SIZE:
+        del _CACHE[next(iter(_CACHE))]
     return out
 
 
